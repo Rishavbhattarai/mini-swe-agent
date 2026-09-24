@@ -11,7 +11,12 @@ from mini_swe_agent.harness.batch_runner import run_batch
 from mini_swe_agent.harness.swebench_eval import run_swebench_evaluation
 
 
-def run_ablation(config_paths: list[str], limit: int | None, base_results_dir: str = "results") -> list[str]:
+def run_ablation(
+    config_paths: list[str],
+    limit: int | None,
+    subset_file: str | None = None,
+    base_results_dir: str = "results",
+) -> list[str]:
     """Returns the list of results directories produced, one per config, ready
     for scripts/report.py to compare."""
     run_dirs = []
@@ -20,6 +25,8 @@ def run_ablation(config_paths: list[str], limit: int | None, base_results_dir: s
         config = RunConfig.load(config_path)
         if limit is not None:
             config.dataset.limit = limit
+        if subset_file is not None:
+            config.dataset.subset_file = subset_file
 
         instances: list[Instance] = load_instances(
             name=config.dataset.name,

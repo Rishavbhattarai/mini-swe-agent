@@ -67,7 +67,9 @@ def cmd_evaluate(args: argparse.Namespace) -> None:
 
 
 def cmd_ablate(args: argparse.Namespace) -> None:
-    run_dirs = run_ablation(args.configs, limit=args.limit, base_results_dir=args.results_dir)
+    run_dirs = run_ablation(
+        args.configs, limit=args.limit, subset_file=args.subset, base_results_dir=args.results_dir
+    )
     print("Ablation run dirs:")
     for d in run_dirs:
         print(f"  {d}")
@@ -109,6 +111,7 @@ def main() -> None:
     p_ablate = sub.add_parser("ablate", help="Run and score multiple configs for an ACI ablation comparison.")
     p_ablate.add_argument("--configs", nargs="+", required=True)
     p_ablate.add_argument("--limit", type=int, default=None)
+    p_ablate.add_argument("--subset", default=None, help="Path to an instance_id allowlist file.")
     p_ablate.add_argument("--results-dir", default="results")
     p_ablate.set_defaults(func=cmd_ablate)
 
