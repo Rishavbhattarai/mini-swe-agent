@@ -9,3 +9,5 @@ results/
 .pytest_cache/
 .DS_Store
 CLAUDE.md
+logs/
+.playwright-mcp/

@@ -50,8 +50,29 @@ class DockerRepoExecutor:
             # (None) hits an assertion inside make_test_spec ("instance_image_tag
             # cannot be None"), confirmed via a real crash on a local-build
             # fallback for an instance with no prebuilt remote image.
-            build_instance_images(client=client, dataset=[raw_row], max_workers=1, tag="latest")
+            #
+            # It also does NOT raise on a failed build -- it returns
+            # (successful, failed) lists and just prints. Confirmed via a real
+            # crash: an ignored build failure left client.containers.run()
+            # trying to run a nonexistent local image, which docker then
+            # attempted to *pull* from Docker Hub, failing with a confusing
+            # unrelated "pull access denied" error instead of a clear build
+            # failure. Check the image actually exists locally before running.
+            _, failed = build_instance_images(client=client, dataset=[raw_row], max_workers=1, tag="latest")
+            if failed:
+                raise RuntimeError(
+                    f"Failed to build local Docker image for instance "
+                    f"{raw_row.get('instance_id')}: {failed}"
+                )
             image_key = local_spec.instance_image_key
+
+        try:
+            client.images.get(image_key)
+        except ImageNotFound as e:
+            raise RuntimeError(
+                f"Docker image '{image_key}' not found locally after build/pull step "
+                f"for instance {raw_row.get('instance_id')}."
+            ) from e
 
         container = client.containers.run(
             image_key,

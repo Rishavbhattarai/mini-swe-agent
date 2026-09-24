@@ -122,7 +122,15 @@ def run_swebench_evaluation(
             open_file_limit=4096,
             run_id=run_id,
             timeout=timeout,
-            namespace="swebench",
+            # namespace=None makes run_evaluation build images locally when
+            # needed (it calls build_env_images itself) instead of only ever
+            # pulling from Docker Hub under namespace="swebench". Confirmed
+            # necessary: not every SWE-bench Lite instance has a published
+            # remote image (astropy__astropy-14365 doesn't), and our own
+            # agent execution already falls back to a local build for those
+            # -- scoring must be able to do the same or it 404s on an
+            # instance we already have a real patch for.
+            namespace=None,
             rewrite_reports=False,
             modal=False,
             instance_image_tag="latest",
