@@ -77,11 +77,18 @@ This is an active, in-progress research project, not a finished benchmark result
 | Agent loop (Ollama tool-calling, prompted fallback, stop conditions) | ✅ Working, unit-tested |
 | ACI tools (find/search/open/edit/test/submit), swappable per config | ✅ Working, unit-tested |
 | Local dev-loop execution (no Docker) | ✅ Verified against a real SWE-bench issue |
-| Docker + official `swebench` scoring pipeline | ✅ Verified end-to-end against a real instance |
-| Agent actually resolving an issue | ⏳ Not yet observed — see note below |
-| Ablation study / full Lite run | ⏳ Not yet run |
+| Docker + official `swebench` scoring pipeline | ✅ Verified end-to-end, real Docker builds, real tests, real scores |
+| Ablation study (basic vs. windowed ACI) | ✅ Complete — see finding below |
+| Agent fully resolving an issue | ⏳ Not yet observed — closest attempt passed 9/10 tests (see below) |
+| Full 300-instance Lite run | ⏳ Not yet run |
 
-The one full scored run so far (`astropy__astropy-12907`, `qwen2.5-coder:7b`, 40-step budget) explored the codebase extensively (31 file opens, 8 searches) but never attempted an edit before hitting the step limit — an `empty_patch` / unresolved result. That's a finding about small-model behavior at this budget, not a broken pipeline: the harness itself, from agent to Docker to official scoring, is confirmed working.
+**5-instance dev batch** (`qwen2.5-coder:7b`, 40-step budget): 0/4 resolved (1 instance excluded — can't build on Apple Silicon, a genuine `linux-aarch64` package-availability gap, not a bug). Every real run either exhausted its step budget without ever calling `edit`, or produced an edit that was rejected/wrong.
+
+**Ablation study** (basic ACI: full-file dumps + grep vs. windowed ACI: scrollable viewer + ripgrep, same 4 instances): neither resolved anything (0/4 each), but **windowed ACI measurably changed agent behavior** — it advanced the model further into the intended workflow (reaching `edit` on an instance where basic ACI never got past searching) and converged ~2.5x faster on average (10.5 vs. 26.0 steps). That specific `edit` attempt was directionally correct but got rejected by the syntax guardrail because the model dropped the original line's indentation — a precise, fixable failure mode, not vague underperformance.
+
+**Fixed the indentation bug and re-ran**: the same edit now succeeds on the first try, and the agent reaches `submit_patch` cleanly (10 steps, 34s) instead of cycling. Scored via the official harness: **9/10 tests passed**. The one failure (`TypeError: __init__() got an unexpected keyword argument 'header_rows'`) shows the real fix needs a new constructor parameter added across a reader/writer class — a multi-file API change the model's single-line edit didn't attempt. Close, not resolved — a genuine, specific, and honest research finding rather than a flat "it doesn't work."
+
+A model-capability check (`qwen2.5-coder:14b`, confirmed fits in 16GB RAM) didn't help either: on the same instance where 7b made a no-op edit, 14b explored 40 tool calls and never attempted `edit` at all. Bigger model alone isn't the fix — this looks like a prompting/scaffolding ceiling as much as a raw-capability one.
 
 ## Prerequisites
 
