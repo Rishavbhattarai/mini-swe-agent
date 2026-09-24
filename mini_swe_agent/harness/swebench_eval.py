@@ -1,21 +1,19 @@
-"""Wraps the official swebench package: builds/starts the per-instance Docker
-image, runs the agent inside it, writes predictions.jsonl in the exact schema
-swebench.harness.run_evaluation expects, and invokes it for FAIL_TO_PASS /
-PASS_TO_PASS scoring -- this is the ONLY path that produces official fix-rate
-numbers (see env/docker_repo.py and README for the local-clone caveat).
+"""Wraps the official swebench package: starts the per-instance Docker
+container (preferring the official prebuilt image), runs the agent inside it,
+writes predictions.jsonl in the exact schema swebench.harness.run_evaluation
+expects, and invokes it for FAIL_TO_PASS/PASS_TO_PASS scoring -- this is the
+ONLY path that produces official fix-rate numbers (see env/docker_repo.py and
+README for the local-clone caveat).
 
-NOTE: the exact swebench image-build helper and run_evaluation entrypoint
-differ across package versions. Once `swebench` is installed, confirm:
-  - the image-build function to call for a given instance_id (swebench.harness.docker_build)
-  - whether to invoke run_evaluation via `python -m swebench.harness.run_evaluation`
-    (subprocess, for version-isolation) or a stable importable function
-before wiring this module up for real.
+Verified against the installed swebench==3.0.17 API.
 """
 from __future__ import annotations
 
 import json
-import subprocess
+import os
 from pathlib import Path
+
+from swebench.harness.run_evaluation import main as swebench_run_evaluation
 
 from mini_swe_agent.agent.loop import Agent
 from mini_swe_agent.config import RunConfig
@@ -25,14 +23,8 @@ from mini_swe_agent.llm.ollama_client import OllamaClient
 from mini_swe_agent.tools.registry import build_registry
 
 
-def instance_image_name(instance: Instance) -> str:
-    """Naming convention swebench uses for its pre-built per-instance images.
-    Verify against the installed swebench version before relying on this."""
-    return f"sweb.eval.x86_64.{instance.instance_id}:latest"
-
-
 def run_one_docker(instance: Instance, config: RunConfig, results_dir: str) -> dict:
-    executor = DockerRepoExecutor.start_for_instance(instance_image_name(instance))
+    executor = DockerRepoExecutor.start_for_instance(instance.raw_row)
     try:
         llm = OllamaClient(
             model=config.llm.model,
@@ -64,29 +56,76 @@ def run_one_docker(instance: Instance, config: RunConfig, results_dir: str) -> d
 
 
 def write_predictions(predictions: list[dict], results_dir: str) -> str:
+    """Writes predictions.jsonl in swebench's exact required schema (extra keys
+    would be harmless to swebench itself, but we keep it strict), plus a
+    run_metadata.jsonl sidecar carrying our own fields (stop_reason,
+    total_steps, wall_clock_s) that scripts/report.py's trajectory stats read
+    -- predictions.jsonl alone can't carry them without risking schema drift
+    against swebench's own reader."""
     path = Path(results_dir) / "predictions.jsonl"
+    metadata_path = Path(results_dir) / "run_metadata.jsonl"
     path.parent.mkdir(parents=True, exist_ok=True)
-    with open(path, "w") as f:
+    with open(path, "w") as f, open(metadata_path, "w") as mf:
         for p in predictions:
             f.write(json.dumps({
                 "instance_id": p["instance_id"],
                 "model_patch": p["model_patch"],
                 "model_name_or_path": p["model_name_or_path"],
             }) + "\n")
+            mf.write(json.dumps({
+                "instance_id": p["instance_id"],
+                "stop_reason": p.get("stop_reason"),
+                "total_steps": p.get("total_steps"),
+                "wall_clock_s": p.get("wall_clock_s"),
+            }) + "\n")
     return str(path)
 
 
-def run_swebench_evaluation(predictions_path: str, run_id: str, results_dir: str) -> str:
-    """Invokes the official swebench harness via subprocess for version isolation.
-    Output report location depends on the installed swebench version's CLI --
-    confirm and adjust the `--run-id`/output flags during build-order step 6."""
-    report_path = Path(results_dir) / "eval_report.json"
-    subprocess.run(
-        [
-            "python", "-m", "swebench.harness.run_evaluation",
-            "--predictions_path", predictions_path,
-            "--run_id", run_id,
-        ],
-        check=True,
-    )
-    return str(report_path)
+def run_swebench_evaluation(
+    predictions_path: str,
+    run_id: str,
+    results_dir: str,
+    dataset_name: str = "princeton-nlp/SWE-bench_Lite",
+    split: str = "test",
+    max_workers: int = 4,
+    timeout: int = 1800,
+) -> str:
+    """Invokes swebench.harness.run_evaluation.main() directly (importable,
+    stable entrypoint in swebench 3.x). NOTE: swebench 3.0.17's
+    make_run_report() ignores the `report_dir` kwarg and always writes
+    "<model>.<run_id>.json" to the current working directory -- so we chdir
+    into results_dir for the call and normalize the output to
+    eval_report.json."""
+    report_dir = Path(results_dir).resolve()
+    report_dir.mkdir(parents=True, exist_ok=True)
+    predictions_path = str(Path(predictions_path).resolve())
+
+    original_cwd = os.getcwd()
+    os.chdir(report_dir)
+    try:
+        swebench_run_evaluation(
+            dataset_name=dataset_name,
+            split=split,
+            instance_ids=[],
+            predictions_path=predictions_path,
+            max_workers=max_workers,
+            force_rebuild=False,
+            cache_level="env",
+            clean=False,
+            open_file_limit=4096,
+            run_id=run_id,
+            timeout=timeout,
+            namespace="swebench",
+            rewrite_reports=False,
+            modal=False,
+            instance_image_tag="latest",
+            report_dir=str(report_dir),
+        )
+    finally:
+        os.chdir(original_cwd)
+
+    produced = sorted(report_dir.glob(f"*.{run_id}.json"))
+    final_path = report_dir / "eval_report.json"
+    if produced:
+        final_path.write_text(produced[-1].read_text())
+    return str(final_path)

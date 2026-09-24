@@ -3,7 +3,25 @@ from mini_swe_agent.tools.find_file import FindFileTool
 from mini_swe_agent.tools.open_file_full import FullFileOpenTool
 from mini_swe_agent.tools.open_file_windowed import WindowedFileOpenTool
 from mini_swe_agent.tools.search_basic import BasicSearchTool
+from mini_swe_agent.tools.search_ripgrep import RipgrepSearchTool
 from mini_swe_agent.tools.submit_patch import SubmitPatchTool
+
+
+class _NoRipgrepExecutor:
+    """Wraps a real executor but pretends `rg` isn't installed, to exercise
+    RipgrepSearchTool's grep fallback (confirmed needed: SWE-bench's official
+    conda-based instance images don't ship ripgrep)."""
+
+    def __init__(self, inner):
+        self._inner = inner
+
+    def run(self, cmd, cwd=None):
+        if cmd.strip() == "command -v rg":
+            return "", "", 1
+        return self._inner.run(cmd, cwd)
+
+    def write_file(self, path, content):
+        return self._inner.write_file(path, content)
 
 
 def test_find_file(scratch_repo):
@@ -50,6 +68,13 @@ def test_edit_applies_valid_change(scratch_repo):
     assert result.success
     reread = FullFileOpenTool(executor=scratch_repo)(path="ok.py")
     assert "return 2" in reread.output
+
+
+def test_ripgrep_search_falls_back_to_grep_when_rg_missing(scratch_repo):
+    tool = RipgrepSearchTool(executor=_NoRipgrepExecutor(scratch_repo))
+    result = tool(query="needle")
+    assert result.success
+    assert "bar.txt" in result.output
 
 
 def test_submit_patch_returns_diff(scratch_repo):

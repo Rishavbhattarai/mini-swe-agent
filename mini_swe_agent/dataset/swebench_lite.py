@@ -18,6 +18,7 @@ class Instance:
     fail_to_pass: list[str]
     pass_to_pass: list[str]
     gold_patch: str  # reference only -- never shown to the agent
+    raw_row: dict  # full original HF row, needed by swebench's own image-build/test_spec API
 
     @classmethod
     def from_row(cls, row: dict) -> "Instance":
@@ -31,6 +32,7 @@ class Instance:
             fail_to_pass=json.loads(row["FAIL_TO_PASS"]) if isinstance(row["FAIL_TO_PASS"], str) else row["FAIL_TO_PASS"],
             pass_to_pass=json.loads(row["PASS_TO_PASS"]) if isinstance(row["PASS_TO_PASS"], str) else row["PASS_TO_PASS"],
             gold_patch=row.get("patch", ""),
+            raw_row=dict(row),
         )
 
 

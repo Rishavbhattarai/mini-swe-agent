@@ -30,10 +30,20 @@ def run_batch(instances: list[Instance], config: RunConfig, results_dir: str) ->
     done = _already_done(results_dir)
     predictions: list[dict] = []
 
-    # Preserve any previously completed predictions when resuming.
+    # Preserve any previously completed predictions (merged back with their
+    # run_metadata.jsonl sidecar, since predictions.jsonl alone doesn't carry
+    # stop_reason/total_steps/wall_clock_s) when resuming.
     existing_path = Path(results_dir) / "predictions.jsonl"
+    metadata_path = Path(results_dir) / "run_metadata.jsonl"
     if existing_path.exists():
         predictions = [json.loads(line) for line in existing_path.read_text().splitlines() if line.strip()]
+        if metadata_path.exists():
+            metadata_by_id = {
+                m["instance_id"]: m
+                for m in (json.loads(line) for line in metadata_path.read_text().splitlines() if line.strip())
+            }
+            for p in predictions:
+                p.update(metadata_by_id.get(p["instance_id"], {}))
 
     run_fn = run_one_docker if config.eval.docker else run_one_local
 

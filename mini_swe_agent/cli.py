@@ -10,7 +10,7 @@ from mini_swe_agent.config import RunConfig
 from mini_swe_agent.dataset.swebench_lite import load_instances
 from mini_swe_agent.harness.batch_runner import run_batch
 from mini_swe_agent.harness.single_instance import run_one_local
-from mini_swe_agent.harness.swebench_eval import run_one_docker, run_swebench_evaluation
+from mini_swe_agent.harness.swebench_eval import run_one_docker, run_swebench_evaluation, write_predictions
 
 
 def cmd_run_one(args: argparse.Namespace) -> None:
@@ -26,8 +26,12 @@ def cmd_run_one(args: argparse.Namespace) -> None:
         sys.exit(1)
 
     results_dir = args.results_dir or f"{config.results_dir}/single_{args.instance_id}"
+    Path(results_dir).mkdir(parents=True, exist_ok=True)
+    config.dump_snapshot(Path(results_dir) / "config_used.yaml")
+
     run_fn = run_one_docker if config.eval.docker else run_one_local
     result = run_fn(instances[0], config, results_dir)
+    write_predictions([result], results_dir)
     print(result)
 
 
@@ -50,10 +54,15 @@ def cmd_run_batch(args: argparse.Namespace) -> None:
 
 
 def cmd_evaluate(args: argparse.Namespace) -> None:
+    snapshot_path = Path(args.run_dir) / "config_used.yaml"
+    config = RunConfig.load(str(snapshot_path)) if snapshot_path.exists() else RunConfig()
     run_swebench_evaluation(
         predictions_path=str(Path(args.run_dir) / "predictions.jsonl"),
         run_id=Path(args.run_dir).name,
         results_dir=args.run_dir,
+        dataset_name=config.dataset.name,
+        split=config.dataset.split,
+        timeout=config.eval.test_timeout_s,
     )
 
 

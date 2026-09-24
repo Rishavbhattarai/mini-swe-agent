@@ -36,6 +36,9 @@ def run_ablation(config_paths: list[str], limit: int | None, base_results_dir: s
                 predictions_path=str(Path(run_dir) / "predictions.jsonl"),
                 run_id=config_name,
                 results_dir=run_dir,
+                dataset_name=config.dataset.name,
+                split=config.dataset.split,
+                timeout=config.eval.test_timeout_s,
             )
 
         run_dirs.append(run_dir)

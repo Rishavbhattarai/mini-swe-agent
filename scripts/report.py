@@ -11,21 +11,24 @@ from pathlib import Path
 def _load_report(run_dir: str) -> dict:
     path = Path(run_dir) / "eval_report.json"
     if not path.exists():
-        return {"resolved": 0, "total": 0, "instances": {}}
+        return {"resolved_instances": 0, "submitted_instances": 0}
     return json.loads(path.read_text())
 
 
 def _fix_rate(report: dict) -> float:
-    total = report.get("total", 0)
-    resolved = report.get("resolved", 0)
-    return (resolved / total) if total else 0.0
+    # Fix rate is over instances we actually submitted, not swebench's
+    # `total_instances` (which is the whole dataset split, e.g. 300 for Lite,
+    # even when we only ran a small subset).
+    submitted = report.get("submitted_instances", 0)
+    resolved = report.get("resolved_instances", 0)
+    return (resolved / submitted) if submitted else 0.0
 
 
 def _trajectory_stats(run_dir: str) -> dict:
-    predictions_path = Path(run_dir) / "predictions.jsonl"
-    if not predictions_path.exists():
+    metadata_path = Path(run_dir) / "run_metadata.jsonl"
+    if not metadata_path.exists():
         return {"avg_steps": 0.0, "avg_wall_clock_s": 0.0, "pct_max_steps": 0.0}
-    rows = [json.loads(line) for line in predictions_path.read_text().splitlines() if line.strip()]
+    rows = [json.loads(line) for line in metadata_path.read_text().splitlines() if line.strip()]
     if not rows:
         return {"avg_steps": 0.0, "avg_wall_clock_s": 0.0, "pct_max_steps": 0.0}
     avg_steps = sum(r.get("total_steps", 0) for r in rows) / len(rows)
@@ -43,8 +46,8 @@ def build_report(run_dirs: list[str]) -> None:
             {
                 "run": Path(run_dir).name,
                 "fix_rate": _fix_rate(report),
-                "resolved": report.get("resolved", 0),
-                "total": report.get("total", 0),
+                "resolved": report.get("resolved_instances", 0),
+                "total": report.get("submitted_instances", 0),
                 **stats,
             }
         )

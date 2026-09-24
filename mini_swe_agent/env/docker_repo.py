@@ -3,41 +3,59 @@
 commands via `docker exec` inside a live container, so the agent's own
 run_tests calls match the harness's final scoring exactly.
 
-NOTE: swebench's public API surface differs across versions -- the exact
-build-image helper imported below must be verified against the installed
-`swebench` version before first real use (see README build-order step 6).
+Verified against the installed `swebench==3.0.17` API (see
+mini_swe_agent/dataset/swebench_lite.py's Instance.raw_row, which carries the
+full HF row this module needs -- our reduced Instance fields aren't enough on
+their own for swebench's TestSpec/image-build calls).
 """
 from __future__ import annotations
 
-import tarfile
 import io
+import tarfile
 from dataclasses import dataclass
 
 import docker
+from docker.errors import APIError, ImageNotFound, NotFound
+from swebench.harness.docker_build import build_instance_images
+from swebench.harness.test_spec.test_spec import make_test_spec
+
+WORKDIR = "/testbed"
 
 
 @dataclass
 class DockerRepoExecutor:
     container: "docker.models.containers.Container"
-    workdir: str = "/testbed"
+    workdir: str = WORKDIR
 
     @classmethod
-    def start_for_instance(cls, instance_image_name: str, workdir: str = "/testbed") -> "DockerRepoExecutor":
-        """Starts (or reuses) a container from a pre-built SWE-bench instance image.
-
-        `instance_image_name` should be the image tag produced by swebench's own
-        image-build pipeline for a given instance_id (see harness/swebench_eval.py
-        and swebench.harness.docker_build for the exact build call once the
-        installed package version's API has been confirmed).
-        """
+    def start_for_instance(cls, raw_row: dict, prefer_remote: bool = True) -> "DockerRepoExecutor":
+        """Starts a container for this instance, preferring swebench's official
+        prebuilt image on Docker Hub (namespace="swebench", fast, official
+        parity) and falling back to a local base->env->instance build (slow,
+        first-time only per repo/version) if no prebuilt image exists."""
         client = docker.from_env()
+        image_key = None
+
+        if prefer_remote:
+            remote_spec = make_test_spec(raw_row, namespace="swebench")
+            try:
+                client.images.pull(remote_spec.instance_image_key)
+                image_key = remote_spec.instance_image_key
+            except (ImageNotFound, NotFound, APIError):
+                image_key = None
+
+        if image_key is None:
+            local_spec = make_test_spec(raw_row)
+            build_instance_images(client=client, dataset=[raw_row], max_workers=1)
+            image_key = local_spec.instance_image_key
+
         container = client.containers.run(
-            instance_image_name,
+            image_key,
             command="sleep infinity",
             detach=True,
-            working_dir=workdir,
+            working_dir=WORKDIR,
         )
-        return cls(container=container, workdir=workdir)
+        return cls(container=container, workdir=WORKDIR)
 
     def run(self, cmd: str, cwd: str | None = None) -> tuple[str, str, int]:
         exec_result = self.container.exec_run(
