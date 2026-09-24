@@ -49,6 +49,23 @@ class EditTool:
                 error=f"invalid line range [{start_line}, {end_line}] for a {len(lines)}-line file",
             )
 
+        original_slice = "\n".join(lines[start_line - 1 : end_line])
+        if replacement.strip() == original_slice.strip():
+            # Confirmed real failure mode with a small local model: it located
+            # the right line, called edit with the SAME content twice, got no
+            # signal that nothing had changed, and gave up. Reject no-op edits
+            # outright so the model is forced to actually produce a change.
+            return ToolResult(
+                success=False,
+                output="",
+                error=(
+                    "edit rejected: the replacement text is identical to the current "
+                    f"content of lines {start_line}-{end_line}. This made no change to "
+                    "the file. If you intend to fix the issue, the replacement must "
+                    "actually differ from the original."
+                ),
+            )
+
         new_lines = lines[: start_line - 1] + replacement.splitlines() + lines[end_line:]
         new_content = "\n".join(new_lines) + "\n"
 

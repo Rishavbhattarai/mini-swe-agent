@@ -24,7 +24,13 @@ def run_one_local(instance: Instance, config: RunConfig, results_dir: str) -> di
         temperature=config.llm.temperature,
         request_timeout_s=config.llm.request_timeout_s,
     )
-    test_cmd = f"python -m pytest {' '.join(instance.fail_to_pass)}" if instance.fail_to_pass else None
+    # See harness/swebench_eval.py for why this uses PASS_TO_PASS, not
+    # FAIL_TO_PASS: the latter don't exist until the gold patch is applied.
+    test_cmd = (
+        f"python -m pytest {' '.join(instance.pass_to_pass[:10])}"
+        if instance.pass_to_pass
+        else None
+    )
     registry = build_registry(
         executor=executor,
         tools_config=config.tools,

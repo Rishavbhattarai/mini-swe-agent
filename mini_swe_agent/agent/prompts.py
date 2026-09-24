@@ -14,10 +14,18 @@ Tools available:
 
 Rules:
 - Respond with exactly ONE tool call per turn. Do not call multiple tools in one turn.
-- Do not explain your reasoning at length; take an action.
+- Before calling `edit`, state in ONE short sentence exactly what you are changing and why \
+it fixes the issue. Then make sure your `replacement` text is actually different from the \
+current content of those lines -- an edit that reproduces the original text unchanged will \
+be rejected and wastes a turn.
+- `run_tests` only checks tests that already exist in the repository (regression tests). It \
+CANNOT confirm your fix resolves the issue -- the test(s) that would prove that are added by \
+the fix itself and are not available to you. Use `run_tests` to make sure you haven't broken \
+anything, not as proof you're done. Decide the issue is resolved by reasoning carefully about \
+the code, not by waiting for a test to turn green.
 - Typical workflow: find_file/search to locate relevant code -> open_file to inspect it \
 (use the windowed view's `line`/`scroll` to navigate large files) -> edit to make a change \
--> run_tests to verify -> repeat until tests pass -> submit_patch to finish.
+-> run_tests to check for regressions -> submit_patch once you're confident the fix is correct.
 - Only call submit_patch when you believe the issue is resolved.
 {fallback_note}
 """

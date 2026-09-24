@@ -32,7 +32,20 @@ def run_one_docker(instance: Instance, config: RunConfig, results_dir: str) -> d
             temperature=config.llm.temperature,
             request_timeout_s=config.llm.request_timeout_s,
         )
-        test_cmd = f"python -m pytest {' '.join(instance.fail_to_pass)}" if instance.fail_to_pass else None
+        # FAIL_TO_PASS tests are added/modified by the gold patch itself and
+        # genuinely don't exist in the pre-fix repo -- confirmed via a live
+        # run where pointing run_tests at them produced "ERROR: not found" /
+        # "no tests ran" instead of a real pass/fail signal, and the model
+        # (getting no useful feedback) retried the same no-op edit twice
+        # before giving up. PASS_TO_PASS tests DO exist pre-patch, so they're
+        # usable as a regression sanity-check instead -- not a confirmation
+        # the issue is fixed (only official scoring can say that), but at
+        # least a real signal rather than a meaningless collection error.
+        test_cmd = (
+            f"python -m pytest {' '.join(instance.pass_to_pass[:10])}"
+            if instance.pass_to_pass
+            else None
+        )
         registry = build_registry(
             executor=executor,
             tools_config=config.tools,

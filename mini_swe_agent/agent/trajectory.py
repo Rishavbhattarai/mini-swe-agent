@@ -31,6 +31,13 @@ class Trajectory:
     def attach_log(self, path: str | Path) -> None:
         self._log_path = Path(path)
         self._log_path.parent.mkdir(parents=True, exist_ok=True)
+        # Truncate: each attach_log call represents a fresh attempt at this
+        # instance (a full agent.run() from scratch, e.g. on a batch resume
+        # or retry). Without this, re-running the same instance appends a
+        # second full trajectory after the first, making the log look like
+        # the agent repeated its own history -- confirmed confusing on a live
+        # run where a duplicate-process race caused exactly this.
+        self._log_path.write_text("")
 
     def add_step(self, step: Step) -> None:
         self.steps.append(step)

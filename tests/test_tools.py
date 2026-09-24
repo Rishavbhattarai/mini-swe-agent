@@ -60,6 +60,15 @@ def test_edit_rejects_syntax_error(scratch_repo):
     assert "syntax error" in result.error
 
 
+def test_edit_rejects_noop_edit(scratch_repo):
+    scratch_repo.write_file("same.py", "def f():\n    return 1\n")
+    result = EditTool(executor=scratch_repo)(
+        path="same.py", start_line=2, end_line=2, replacement="    return 1"
+    )
+    assert not result.success
+    assert "identical" in result.error
+
+
 def test_edit_applies_valid_change(scratch_repo):
     scratch_repo.write_file("ok.py", "def f():\n    return 1\n")
     result = EditTool(executor=scratch_repo)(
