@@ -69,6 +69,28 @@ def test_edit_rejects_noop_edit(scratch_repo):
     assert "identical" in result.error
 
 
+def test_edit_restores_dropped_indentation(scratch_repo):
+    """Reproduces the real ablation-study failure: model provides a correct
+    fix but strips leading whitespace, which would otherwise be rejected by
+    the syntax guardrail. edit() should re-apply the original indentation."""
+    scratch_repo.write_file(
+        "indented.py",
+        "class C:\n"
+        "    def f(self):\n"
+        '        header_rows = getattr(self, "header_rows", ["name"])\n'
+        "        return header_rows\n",
+    )
+    result = EditTool(executor=scratch_repo)(
+        path="indented.py",
+        start_line=3,
+        end_line=3,
+        replacement='header_rows = getattr(self, "header_rows", ["name", "unit"])',
+    )
+    assert result.success, result.error
+    reread = FullFileOpenTool(executor=scratch_repo)(path="indented.py")
+    assert '        header_rows = getattr(self, "header_rows", ["name", "unit"])' in reread.output
+
+
 def test_edit_applies_valid_change(scratch_repo):
     scratch_repo.write_file("ok.py", "def f():\n    return 1\n")
     result = EditTool(executor=scratch_repo)(

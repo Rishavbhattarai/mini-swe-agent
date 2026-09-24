@@ -3,11 +3,35 @@ files (mirrors SWE-agent's edit validation/linting before an edit is accepted)."
 from __future__ import annotations
 
 import ast
+import re
 from dataclasses import dataclass
 
 from mini_swe_agent.tools.base import Executor, ToolResult
 
 CONTEXT_LINES = 3
+
+
+def _restore_dropped_indentation(replacement: str, original_first_line: str) -> str:
+    """If the model dropped leading whitespace entirely (first replacement
+    line has none, but the line it's replacing did), re-apply the original
+    line's indentation to every non-blank replacement line.
+
+    Confirmed real failure mode via the ablation study: the model correctly
+    identified the fix (adding "unit" to a default list) but submitted the
+    replacement with no leading whitespace, tripping the syntax guardrail,
+    then retried the identical malformed edit 3 times without adapting
+    instead of fixing the indentation itself.
+    """
+    indent_match = re.match(r"^[ \t]*", original_first_line)
+    original_indent = indent_match.group() if indent_match else ""
+    if not original_indent:
+        return replacement
+
+    repl_lines = replacement.splitlines()
+    if not repl_lines or repl_lines[0].startswith((" ", "\t")):
+        return replacement  # model already provided some indentation; trust it
+
+    return "\n".join(original_indent + line if line.strip() else line for line in repl_lines)
 
 
 @dataclass
@@ -50,6 +74,8 @@ class EditTool:
             )
 
         original_slice = "\n".join(lines[start_line - 1 : end_line])
+        replacement = _restore_dropped_indentation(replacement, lines[start_line - 1])
+
         if replacement.strip() == original_slice.strip():
             # Confirmed real failure mode with a small local model: it located
             # the right line, called edit with the SAME content twice, got no
