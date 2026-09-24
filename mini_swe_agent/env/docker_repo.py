@@ -46,7 +46,11 @@ class DockerRepoExecutor:
 
         if image_key is None:
             local_spec = make_test_spec(raw_row)
-            build_instance_images(client=client, dataset=[raw_row], max_workers=1)
+            # build_instance_images requires an explicit tag -- its default
+            # (None) hits an assertion inside make_test_spec ("instance_image_tag
+            # cannot be None"), confirmed via a real crash on a local-build
+            # fallback for an instance with no prebuilt remote image.
+            build_instance_images(client=client, dataset=[raw_row], max_workers=1, tag="latest")
             image_key = local_spec.instance_image_key
 
         container = client.containers.run(

@@ -1,0 +1,2 @@
+2026-09-23 23:47:38,950 - INFO - Environment image sweb.env.py.arm64.428468730904ff6b4232aa:latest found for astropy__astropy-14365
+Building instance image sweb.eval.arm64.astropy__astropy-14365:latest for astropy__astropy-14365

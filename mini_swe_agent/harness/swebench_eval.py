@@ -43,7 +43,14 @@ def run_one_docker(instance: Instance, config: RunConfig, results_dir: str) -> d
         log_path = Path(results_dir) / "trajectories" / f"{instance.instance_id}.jsonl"
         trajectory = agent.run(instance.instance_id, instance.problem_statement, log_path=str(log_path))
     finally:
-        executor.stop()
+        # Best-effort cleanup: a Docker hiccup here (daemon paused, network
+        # blip) must not discard an already-completed agent result -- confirmed
+        # via a live run where Docker Desktop was paused mid-batch and
+        # container.stop() raised after the agent had already finished.
+        try:
+            executor.stop()
+        except Exception:
+            pass
 
     return {
         "instance_id": instance.instance_id,
