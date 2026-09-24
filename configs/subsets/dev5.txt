@@ -1,0 +1,3 @@
+# List of instance_ids for cheap iteration (one per line, '#' comments allowed).
+# Fill in with 5 real SWE-bench Lite instance_ids once the dataset has been loaded once, e.g.:
+# python -c "from mini_swe_agent.dataset.swebench_lite import load_instances; [print(i.instance_id) for i in load_instances(limit=5)]"

@@ -1,0 +1,28 @@
+[project]
+name = "mini-swe-agent"
+version = "0.1.0"
+description = "A mini SWE-agent-style coding agent evaluated on SWE-bench Lite, with a swappable agent-computer interface (ACI) for ablation studies."
+requires-python = ">=3.10"
+dependencies = [
+    "swebench>=3.0,<4.0",
+    "datasets>=2.19",
+    "docker>=7.0",
+    "httpx>=0.27",
+    "pyyaml>=6.0",
+    "pydantic>=2.7",
+    "pydantic-settings>=2.2",
+    "rich>=13.7",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+
+[project.scripts]
+mini-swe = "mini_swe_agent.cli:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["mini_swe_agent*"]

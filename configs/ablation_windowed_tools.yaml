@@ -1,0 +1,31 @@
+# Ablation: SWE-agent-style ACI — windowed/scrollable file viewer + ripgrep search.
+# Everything else matches configs/default.yaml so fix-rate deltas are attributable to the ACI change.
+
+llm:
+  model: qwen2.5-coder:32b
+  host: http://localhost:11434
+  tool_call_mode: auto
+  temperature: 0.0
+  request_timeout_s: 120
+
+agent:
+  max_steps: 40
+  file_view_window: 100
+  stop_on_repeated_call: true
+  auto_stop_on_tests_pass: false
+
+tools:
+  tool_profile: windowed
+  search_impl: ripgrep
+
+dataset:
+  name: princeton-nlp/SWE-bench_Lite
+  split: test
+  limit: null
+  subset_file: null
+
+eval:
+  docker: true
+  test_timeout_s: 600
+
+results_dir: results

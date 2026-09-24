@@ -1,0 +1,31 @@
+# Default run configuration for mini-swe-agent.
+# Precedence when merged at runtime: defaults < this file (or --config override) < env vars < CLI flags.
+
+llm:
+  model: qwen2.5-coder:32b
+  host: http://localhost:11434
+  tool_call_mode: auto   # native | prompted | auto (try native, fall back to prompted JSON)
+  temperature: 0.0
+  request_timeout_s: 120
+
+agent:
+  max_steps: 40
+  file_view_window: 100
+  stop_on_repeated_call: true
+  auto_stop_on_tests_pass: false
+
+tools:
+  tool_profile: windowed   # basic | windowed
+  search_impl: ripgrep     # grep | ripgrep
+
+dataset:
+  name: princeton-nlp/SWE-bench_Lite
+  split: test
+  limit: null
+  subset_file: null
+
+eval:
+  docker: true
+  test_timeout_s: 600
+
+results_dir: results
