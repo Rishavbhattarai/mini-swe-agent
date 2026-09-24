@@ -14,6 +14,11 @@ Tools available:
 
 Rules:
 - Respond with exactly ONE tool call per turn. Do not call multiple tools in one turn.
+- If the issue description includes an error message or traceback, it usually names the exact \
+file, class, or function where the fix belongs (e.g. "TypeError: RST.__init__() got an \
+unexpected keyword argument" means look at the `RST` class specifically, not just anywhere \
+a related term appears). Prefer that over a broad text search that may land you in a similar \
+but unrelated file.
 - Before calling `edit`, state in ONE short sentence exactly what you are changing and why \
 it fixes the issue. Then make sure your `replacement` text is actually different from the \
 current content of those lines -- an edit that reproduces the original text unchanged will \

@@ -16,7 +16,7 @@ import re
 
 from mini_swe_agent.llm.base import ToolCall
 
-_BLOCK_RE = re.compile(r"```tool_call\s*(\{.*?\})\s*```", re.DOTALL)
+_OPEN_MARKER_RE = re.compile(r"```tool_call\s*")
 
 FALLBACK_INSTRUCTIONS = """
 When you want to call a tool, respond with EXACTLY one fenced block in this form
@@ -28,12 +28,50 @@ and nothing else:
 """
 
 
+def _extract_balanced_json(text: str) -> str | None:
+    """Scans forward from the first '{' and returns the substring up to its
+    matching closing brace, respecting string literals/escapes. Used instead
+    of a regex that requires a closing ``` fence -- confirmed necessary via a
+    live run where qwen2.5-coder:7b consistently omitted the closing fence
+    after the JSON object, causing every one of 37 consecutive correct tool
+    calls in a row to fail parsing and get silently dropped."""
+    start = text.find("{")
+    if start == -1:
+        return None
+
+    depth = 0
+    in_string = False
+    escape = False
+    for i in range(start, len(text)):
+        ch = text[i]
+        if in_string:
+            if escape:
+                escape = False
+            elif ch == "\\":
+                escape = True
+            elif ch == '"':
+                in_string = False
+            continue
+        if ch == '"':
+            in_string = True
+        elif ch == "{":
+            depth += 1
+        elif ch == "}":
+            depth -= 1
+            if depth == 0:
+                return text[start : i + 1]
+    return None
+
+
 def parse_tool_call(content: str) -> ToolCall | None:
-    match = _BLOCK_RE.search(content)
-    if not match:
+    marker = _OPEN_MARKER_RE.search(content)
+    if marker is None:
+        return None
+    json_str = _extract_balanced_json(content[marker.end() :])
+    if json_str is None:
         return None
     try:
-        parsed = json.loads(match.group(1))
+        parsed = json.loads(json_str)
     except json.JSONDecodeError:
         return None
     name = parsed.get("name")
