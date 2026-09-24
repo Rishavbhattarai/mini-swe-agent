@@ -3,6 +3,7 @@ name = "mini-swe-agent"
 version = "0.1.0"
 description = "A mini SWE-agent-style coding agent evaluated on SWE-bench Lite, with a swappable agent-computer interface (ACI) for ablation studies."
 requires-python = ">=3.10"
+license = "MIT"
 dependencies = [
     "swebench>=3.0,<4.0",
     "datasets>=2.19",

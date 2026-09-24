@@ -1,0 +1,161 @@
+<svg class="rich-terminal" viewBox="0 0 1178 660.0" xmlns="http://www.w3.org/2000/svg">
+    <!-- Generated with Rich https://www.textualize.io -->
+    <style>
+
+    @font-face {
+        font-family: "Fira Code";
+        src: local("FiraCode-Regular"),
+                url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff2/FiraCode-Regular.woff2") format("woff2"),
+                url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff/FiraCode-Regular.woff") format("woff");
+        font-style: normal;
+        font-weight: 400;
+    }
+    @font-face {
+        font-family: "Fira Code";
+        src: local("FiraCode-Bold"),
+                url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff2/FiraCode-Bold.woff2") format("woff2"),
+                url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff/FiraCode-Bold.woff") format("woff");
+        font-style: bold;
+        font-weight: 700;
+    }
+
+    .terminal-2853323633-matrix {
+        font-family: Fira Code, monospace;
+        font-size: 20px;
+        line-height: 24.4px;
+        font-variant-east-asian: full-width;
+    }
+
+    .terminal-2853323633-title {
+        font-size: 18px;
+        font-weight: bold;
+        font-family: arial;
+    }
+
+    .terminal-2853323633-r1 { fill: #98a84b;font-weight: bold }
+.terminal-2853323633-r2 { fill: #c5c8c6;font-weight: bold }
+.terminal-2853323633-r3 { fill: #c5c8c6 }
+.terminal-2853323633-r4 { fill: #b2b2b2 }
+.terminal-2853323633-r5 { fill: #68a0b3;font-weight: bold }
+.terminal-2853323633-r6 { fill: #949494;font-weight: bold }
+.terminal-2853323633-r7 { fill: #808080 }
+.terminal-2853323633-r8 { fill: #d0b344;font-weight: bold }
+    </style>
+
+    <defs>
+    <clipPath id="terminal-2853323633-clip-terminal">
+      <rect x="0" y="0" width="1159.0" height="609.0" />
+    </clipPath>
+    <clipPath id="terminal-2853323633-line-0">
+    <rect x="0" y="1.5" width="1160" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2853323633-line-1">
+    <rect x="0" y="25.9" width="1160" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2853323633-line-2">
+    <rect x="0" y="50.3" width="1160" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2853323633-line-3">
+    <rect x="0" y="74.7" width="1160" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2853323633-line-4">
+    <rect x="0" y="99.1" width="1160" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2853323633-line-5">
+    <rect x="0" y="123.5" width="1160" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2853323633-line-6">
+    <rect x="0" y="147.9" width="1160" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2853323633-line-7">
+    <rect x="0" y="172.3" width="1160" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2853323633-line-8">
+    <rect x="0" y="196.7" width="1160" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2853323633-line-9">
+    <rect x="0" y="221.1" width="1160" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2853323633-line-10">
+    <rect x="0" y="245.5" width="1160" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2853323633-line-11">
+    <rect x="0" y="269.9" width="1160" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2853323633-line-12">
+    <rect x="0" y="294.3" width="1160" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2853323633-line-13">
+    <rect x="0" y="318.7" width="1160" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2853323633-line-14">
+    <rect x="0" y="343.1" width="1160" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2853323633-line-15">
+    <rect x="0" y="367.5" width="1160" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2853323633-line-16">
+    <rect x="0" y="391.9" width="1160" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2853323633-line-17">
+    <rect x="0" y="416.3" width="1160" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2853323633-line-18">
+    <rect x="0" y="440.7" width="1160" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2853323633-line-19">
+    <rect x="0" y="465.1" width="1160" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2853323633-line-20">
+    <rect x="0" y="489.5" width="1160" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2853323633-line-21">
+    <rect x="0" y="513.9" width="1160" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2853323633-line-22">
+    <rect x="0" y="538.3" width="1160" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2853323633-line-23">
+    <rect x="0" y="562.7" width="1160" height="24.65"/>
+            </clipPath>
+    </defs>
+
+    <rect fill="#292929" stroke="rgba(255,255,255,0.35)" stroke-width="1" x="1" y="1" width="1176" height="658" rx="8"/><text class="terminal-2853323633-title" fill="#c5c8c6" text-anchor="middle" x="588" y="27">mini-swe-agent</text>
+            <g transform="translate(26,22)">
+            <circle cx="0" cy="0" r="7" fill="#ff5f57"/>
+            <circle cx="22" cy="0" r="7" fill="#febc2e"/>
+            <circle cx="44" cy="0" r="7" fill="#28c840"/>
+            </g>
+        
+    <g transform="translate(9, 41)" clip-path="url(#terminal-2853323633-clip-terminal)">
+    
+    <g class="terminal-2853323633-matrix">
+    <text class="terminal-2853323633-r1" x="0" y="20" textLength="23.2" clip-path="url(#terminal-2853323633-line-0)">$&#160;</text><text class="terminal-2853323633-r2" x="23.2" y="20" textLength="1125.2" clip-path="url(#terminal-2853323633-line-0)">mini-swe&#160;run-one&#160;--instance-id&#160;astropy__astropy-12907&#160;--config&#160;configs/default.yaml&#160;--docker&#160;true</text><text class="terminal-2853323633-r3" x="1160" y="20" textLength="11.6" clip-path="url(#terminal-2853323633-line-0)">
+</text><text class="terminal-2853323633-r4" x="0" y="44.4" textLength="997.6" clip-path="url(#terminal-2853323633-line-1)">Starting&#160;container&#160;from&#160;swebench/sweb.eval.arm64.astropy_1776_astropy-12907:latest&#160;...</text><text class="terminal-2853323633-r3" x="1160" y="44.4" textLength="11.6" clip-path="url(#terminal-2853323633-line-1)">
+</text><text class="terminal-2853323633-r3" x="1160" y="68.8" textLength="11.6" clip-path="url(#terminal-2853323633-line-2)">
+</text><text class="terminal-2853323633-r5" x="0" y="93.2" textLength="127.6" clip-path="url(#terminal-2853323633-line-3)">&#160;&#160;-&gt;&#160;search</text><text class="terminal-2853323633-r6" x="127.6" y="93.2" textLength="730.8" clip-path="url(#terminal-2853323633-line-3)">&#160;{&#x27;query&#x27;:&#160;&#x27;is_separable&#x27;,&#160;&#x27;path&#x27;:&#160;&#x27;.&#x27;,&#160;&#x27;file_pattern&#x27;:&#160;&#x27;*.py&#x27;}</text><text class="terminal-2853323633-r3" x="1160" y="93.2" textLength="11.6" clip-path="url(#terminal-2853323633-line-3)">
+</text><text class="terminal-2853323633-r7" x="0" y="117.6" textLength="556.8" clip-path="url(#terminal-2853323633-line-4)">&#160;&#160;&#160;&#160;&#160;astropy/modeling/separable.py&#160;(13&#160;matches):</text><text class="terminal-2853323633-r3" x="1160" y="117.6" textLength="11.6" clip-path="url(#terminal-2853323633-line-4)">
+</text><text class="terminal-2853323633-r7" x="0" y="142" textLength="696" clip-path="url(#terminal-2853323633-line-5)">&#160;&#160;&#160;&#160;&#160;&#160;&#160;24:&#160;__all__&#160;=&#160;[&quot;is_separable&quot;,&#160;&quot;separability_matrix&quot;]</text><text class="terminal-2853323633-r3" x="1160" y="142" textLength="11.6" clip-path="url(#terminal-2853323633-line-5)">
+</text><text class="terminal-2853323633-r7" x="0" y="166.4" textLength="452.4" clip-path="url(#terminal-2853323633-line-6)">&#160;&#160;&#160;&#160;&#160;&#160;&#160;27:&#160;def&#160;is_separable(transform):</text><text class="terminal-2853323633-r3" x="1160" y="166.4" textLength="11.6" clip-path="url(#terminal-2853323633-line-6)">
+</text><text class="terminal-2853323633-r5" x="0" y="190.8" textLength="162.4" clip-path="url(#terminal-2853323633-line-7)">&#160;&#160;-&gt;&#160;open_file</text><text class="terminal-2853323633-r6" x="162.4" y="190.8" textLength="487.2" clip-path="url(#terminal-2853323633-line-7)">&#160;{&#x27;path&#x27;:&#160;&#x27;astropy/modeling/separable.py&#x27;}</text><text class="terminal-2853323633-r3" x="1160" y="190.8" textLength="11.6" clip-path="url(#terminal-2853323633-line-7)">
+</text><text class="terminal-2853323633-r7" x="0" y="215.2" textLength="823.6" clip-path="url(#terminal-2853323633-line-8)">&#160;&#160;&#160;&#160;&#160;1:&#160;#&#160;Licensed&#160;under&#160;a&#160;3-clause&#160;BSD&#160;style&#160;license&#160;-&#160;see&#160;LICENSE.rst</text><text class="terminal-2853323633-r3" x="1160" y="215.2" textLength="11.6" clip-path="url(#terminal-2853323633-line-8)">
+</text><text class="terminal-2853323633-r7" x="0" y="239.6" textLength="92.8" clip-path="url(#terminal-2853323633-line-9)">&#160;&#160;&#160;&#160;&#160;...</text><text class="terminal-2853323633-r3" x="1160" y="239.6" textLength="11.6" clip-path="url(#terminal-2853323633-line-9)">
+</text><text class="terminal-2853323633-r3" x="1160" y="264" textLength="11.6" clip-path="url(#terminal-2853323633-line-10)">
+</text><text class="terminal-2853323633-r7" x="0" y="288.4" textLength="1020.8" clip-path="url(#terminal-2853323633-line-11)">{&#x27;instance_id&#x27;:&#160;&#x27;astropy__astropy-12907&#x27;,&#160;&#x27;stop_reason&#x27;:&#160;&#x27;max_steps&#x27;,&#160;&#x27;total_steps&#x27;:&#160;80,</text><text class="terminal-2853323633-r3" x="1160" y="288.4" textLength="11.6" clip-path="url(#terminal-2853323633-line-11)">
+</text><text class="terminal-2853323633-r7" x="0" y="312.8" textLength="754" clip-path="url(#terminal-2853323633-line-12)">&#160;&#x27;wall_clock_s&#x27;:&#160;455.0,&#160;&#x27;model_name_or_path&#x27;:&#160;&#x27;qwen2.5-coder:7b&#x27;}</text><text class="terminal-2853323633-r3" x="1160" y="312.8" textLength="11.6" clip-path="url(#terminal-2853323633-line-12)">
+</text><text class="terminal-2853323633-r3" x="1160" y="337.2" textLength="11.6" clip-path="url(#terminal-2853323633-line-13)">
+</text><text class="terminal-2853323633-r1" x="0" y="361.6" textLength="23.2" clip-path="url(#terminal-2853323633-line-14)">$&#160;</text><text class="terminal-2853323633-r2" x="23.2" y="361.6" textLength="533.6" clip-path="url(#terminal-2853323633-line-14)">mini-swe&#160;evaluate&#160;--run-dir&#160;results/mvp_docker</text><text class="terminal-2853323633-r3" x="1160" y="361.6" textLength="11.6" clip-path="url(#terminal-2853323633-line-14)">
+</text><text class="terminal-2853323633-r4" x="0" y="386" textLength="232" clip-path="url(#terminal-2853323633-line-15)">Total&#160;instances:&#160;300</text><text class="terminal-2853323633-r3" x="1160" y="386" textLength="11.6" clip-path="url(#terminal-2853323633-line-15)">
+</text><text class="terminal-2853323633-r4" x="0" y="410.4" textLength="255.2" clip-path="url(#terminal-2853323633-line-16)">Instances&#160;submitted:&#160;1</text><text class="terminal-2853323633-r3" x="1160" y="410.4" textLength="11.6" clip-path="url(#terminal-2853323633-line-16)">
+</text><text class="terminal-2853323633-r4" x="0" y="434.8" textLength="255.2" clip-path="url(#terminal-2853323633-line-17)">Instances&#160;completed:&#160;0</text><text class="terminal-2853323633-r3" x="1160" y="434.8" textLength="11.6" clip-path="url(#terminal-2853323633-line-17)">
+</text><text class="terminal-2853323633-r4" x="0" y="459.2" textLength="243.6" clip-path="url(#terminal-2853323633-line-18)">Instances&#160;resolved:&#160;0</text><text class="terminal-2853323633-r3" x="1160" y="459.2" textLength="11.6" clip-path="url(#terminal-2853323633-line-18)">
+</text><text class="terminal-2853323633-r4" x="0" y="483.6" textLength="359.6" clip-path="url(#terminal-2853323633-line-19)">Instances&#160;with&#160;empty&#160;patches:&#160;1</text><text class="terminal-2853323633-r3" x="1160" y="483.6" textLength="11.6" clip-path="url(#terminal-2853323633-line-19)">
+</text><text class="terminal-2853323633-r8" x="0" y="508" textLength="394.4" clip-path="url(#terminal-2853323633-line-20)">Report&#160;written&#160;to&#160;eval_report.json</text><text class="terminal-2853323633-r3" x="1160" y="508" textLength="11.6" clip-path="url(#terminal-2853323633-line-20)">
+</text><text class="terminal-2853323633-r3" x="1160" y="532.4" textLength="11.6" clip-path="url(#terminal-2853323633-line-21)">
+</text><text class="terminal-2853323633-r1" x="0" y="556.8" textLength="23.2" clip-path="url(#terminal-2853323633-line-22)">$&#160;</text><text class="terminal-2853323633-r2" x="23.2" y="556.8" textLength="104.4" clip-path="url(#terminal-2853323633-line-22)">pytest&#160;-q</text><text class="terminal-2853323633-r3" x="1160" y="556.8" textLength="11.6" clip-path="url(#terminal-2853323633-line-22)">
+</text><text class="terminal-2853323633-r1" x="0" y="581.2" textLength="916.4" clip-path="url(#terminal-2853323633-line-23)">..................&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;[100%]</text><text class="terminal-2853323633-r3" x="1160" y="581.2" textLength="11.6" clip-path="url(#terminal-2853323633-line-23)">
+</text><text class="terminal-2853323633-r1" x="0" y="605.6" textLength="208.8" clip-path="url(#terminal-2853323633-line-24)">18&#160;passed&#160;in&#160;1.41s</text><text class="terminal-2853323633-r3" x="1160" y="605.6" textLength="11.6" clip-path="url(#terminal-2853323633-line-24)">
+</text>
+    </g>
+    </g>
+</svg>
