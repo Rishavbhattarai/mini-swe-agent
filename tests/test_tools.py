@@ -60,6 +60,20 @@ def test_edit_rejects_syntax_error(scratch_repo):
     assert "syntax error" in result.error
 
 
+def test_edit_syntax_error_shows_current_line_context(scratch_repo):
+    """Confirmed real failure mode: the model was off by one line (targeted a
+    blank line instead of the function def right after it) and, seeing only
+    the raw ast.parse error, kept retrying the wrong line number instead of
+    noticing the mismatch."""
+    scratch_repo.write_file("blank.py", "\ndef f():\n    return 1\n")
+    result = EditTool(executor=scratch_repo)(
+        path="blank.py", start_line=1, end_line=1, replacement="def f(header_rows=None):"
+    )
+    assert not result.success
+    assert "actually contained BEFORE your edit" in result.error
+    assert "2: def f():" in result.error
+
+
 def test_edit_rejects_noop_edit(scratch_repo):
     scratch_repo.write_file("same.py", "def f():\n    return 1\n")
     result = EditTool(executor=scratch_repo)(

@@ -99,10 +99,28 @@ class EditTool:
             try:
                 ast.parse(new_content)
             except SyntaxError as e:
+                # Show the model what's actually at the lines it targeted, not
+                # just the raw parser error. Confirmed necessary via a live
+                # run: the model was off by one line (targeting line 59, a
+                # blank line, when the function it meant to edit was on line
+                # 60) and, seeing only the abstract syntax-error text, kept
+                # retrying the same wrong line number instead of noticing the
+                # mismatch and correcting it.
+                context_start = max(1, start_line - CONTEXT_LINES)
+                context_end = min(len(lines), end_line + CONTEXT_LINES)
+                context = "\n".join(
+                    f"{i + 1}: {lines[i]}" for i in range(context_start - 1, context_end)
+                )
                 return ToolResult(
                     success=False,
                     output="",
-                    error=f"edit rejected: resulting file has a syntax error: {e}",
+                    error=(
+                        f"edit rejected: resulting file has a syntax error: {e}\n"
+                        f"For reference, here is what lines {context_start}-{context_end} "
+                        f"actually contained BEFORE your edit (you targeted lines "
+                        f"{start_line}-{end_line} -- double check that's really where "
+                        "the code you meant to change is):\n" + context
+                    ),
                 )
 
         write_result = self.executor.write_file(path, new_content)
