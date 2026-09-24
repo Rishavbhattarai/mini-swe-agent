@@ -8,7 +8,7 @@ edits code, runs tests, and submits a patch; different tool designs (windowed
 file viewer vs. full-file dump, ripgrep vs. basic grep) can be swapped via
 config and compared in an ablation study that reports fix-rate deltas.
 
-Runs entirely on a **local Ollama model** (default `qwen2.5-coder:32b`) — no
+Runs entirely on a **local Ollama model** (default `qwen2.5-coder:7b`) — no
 API keys required.
 
 ## Prerequisites
@@ -16,9 +16,10 @@ API keys required.
 1. **Ollama**, running locally, with the model pulled:
    ```
    ollama serve
-   ollama pull qwen2.5-coder:32b
-   # optional, for fast iteration:
    ollama pull qwen2.5-coder:7b
+   # optional, if you have 20GB+ RAM/VRAM to spare (thrashes/times out on a
+   # 16GB machine -- confirmed on an M4 MacBook with 16GB RAM):
+   ollama pull qwen2.5-coder:32b
    ```
 2. **Docker Desktop**, running. Required for the official SWE-bench Lite
    evaluation harness (`swebench` builds a per-instance repo image and runs
@@ -67,9 +68,9 @@ python scripts/report.py results/full_lite
 ```
 
 This builds a Docker image per repo (cached after first use) and runs 300
-local-LLM episodes — expect a long wall-clock run (likely hours), especially
-with the 32b model. `run-batch` is resumable: re-running the same command
-skips instances already present in `results/full_lite/predictions.jsonl`.
+local-LLM episodes — expect a long wall-clock run (likely hours). `run-batch`
+is resumable: re-running the same command skips instances already present in
+`results/full_lite/predictions.jsonl`.
 
 ## Ablation study: does the ACI matter?
 

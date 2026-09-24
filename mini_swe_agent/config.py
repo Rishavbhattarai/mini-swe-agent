@@ -10,11 +10,11 @@ from pydantic import BaseModel
 
 
 class LLMConfig(BaseModel):
-    model: str = "qwen2.5-coder:32b"
+    model: str = "qwen2.5-coder:7b"
     host: str = "http://localhost:11434"
     tool_call_mode: Literal["native", "prompted", "auto"] = "auto"
     temperature: float = 0.0
-    request_timeout_s: int = 120
+    request_timeout_s: int = 600
 
 
 class AgentConfig(BaseModel):

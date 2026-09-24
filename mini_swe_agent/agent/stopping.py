@@ -13,12 +13,28 @@ class StopCheck:
     reason: Optional[str] = None
 
 
+def _is_cycling(call_history: list[ToolCall], max_period: int, min_repeats: int) -> bool:
+    """Detects A,B,A,B,... (or longer) cycles, not just immediate exact duplicates.
+    For each candidate period p, checks whether the last `min_repeats` repetitions
+    of a length-p block are all identical."""
+    signatures = [(c.name, tuple(sorted(c.arguments.items()))) for c in call_history]
+    for period in range(1, max_period + 1):
+        window = period * min_repeats
+        if len(signatures) < window:
+            continue
+        tail = signatures[-window:]
+        block = tail[:period]
+        if all(tail[i * period:(i + 1) * period] == block for i in range(min_repeats)):
+            return True
+    return False
+
+
 def check_stop(
     tool_call: Optional[ToolCall],
     tool_result_success: Optional[bool],
     step_count: int,
     max_steps: int,
-    last_two_calls: list[ToolCall],
+    call_history: list[ToolCall],
     stop_on_repeated_call: bool,
     auto_stop_on_tests_pass: bool,
 ) -> StopCheck:
@@ -28,12 +44,7 @@ def check_stop(
     if step_count >= max_steps:
         return StopCheck(stopped=True, reason="max_steps")
 
-    if (
-        stop_on_repeated_call
-        and len(last_two_calls) == 2
-        and last_two_calls[0].name == last_two_calls[1].name
-        and last_two_calls[0].arguments == last_two_calls[1].arguments
-    ):
+    if stop_on_repeated_call and _is_cycling(call_history, max_period=3, min_repeats=3):
         return StopCheck(stopped=True, reason="repeated_call")
 
     if (

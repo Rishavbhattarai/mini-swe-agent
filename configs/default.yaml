@@ -2,11 +2,11 @@
 # Precedence when merged at runtime: defaults < this file (or --config override) < env vars < CLI flags.
 
 llm:
-  model: qwen2.5-coder:32b
+  model: qwen2.5-coder:7b
   host: http://localhost:11434
   tool_call_mode: auto   # native | prompted | auto (try native, fall back to prompted JSON)
   temperature: 0.0
-  request_timeout_s: 120
+  request_timeout_s: 600
 
 agent:
   max_steps: 40

@@ -40,7 +40,7 @@ class Agent:
             build_issue_message(problem_statement),
         ]
 
-        last_two_calls: list[ToolCall] = []
+        call_history: list[ToolCall] = []
         start = time.time()
         stop_reason = "max_steps"
         final_patch = None
@@ -65,13 +65,13 @@ class Agent:
             if tool_call.name == "submit_patch" and result.success:
                 final_patch = result.metadata.get("patch")
 
-            last_two_calls = (last_two_calls + [tool_call])[-2:]
+            call_history.append(tool_call)
             stop = check_stop(
                 tool_call=tool_call,
                 tool_result_success=result.success,
                 step_count=step_num,
                 max_steps=self.agent_config.max_steps,
-                last_two_calls=last_two_calls,
+                call_history=call_history,
                 stop_on_repeated_call=self.agent_config.stop_on_repeated_call,
                 auto_stop_on_tests_pass=self.agent_config.auto_stop_on_tests_pass,
             )

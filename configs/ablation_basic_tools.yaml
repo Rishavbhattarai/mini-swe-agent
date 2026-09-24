@@ -2,11 +2,11 @@
 # Everything else matches configs/default.yaml so fix-rate deltas are attributable to the ACI change.
 
 llm:
-  model: qwen2.5-coder:32b
+  model: qwen2.5-coder:7b
   host: http://localhost:11434
   tool_call_mode: auto
   temperature: 0.0
-  request_timeout_s: 120
+  request_timeout_s: 600
 
 agent:
   max_steps: 40
